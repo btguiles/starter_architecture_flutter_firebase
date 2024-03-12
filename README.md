@@ -82,6 +82,7 @@ Then run this on the terminal from the root of this project:
 
 - Run `firebase login` so you have access to the Firebase project you have created
 - Run `flutterfire configure` and follow all the steps
+  - May need `flutterfire configure --project=your-project-id` to specify the project. Project ID can be found from the firebase url.
 
 For more info, follow this guide:
 

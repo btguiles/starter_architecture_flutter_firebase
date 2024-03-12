@@ -15,21 +15,18 @@ part 'entries_service.g.dart';
 
 // TODO: Clean up this code a bit more
 class EntriesService {
-  EntriesService(
-      {required this.jobsRepository, required this.entriesRepository});
+  EntriesService({required this.jobsRepository, required this.entriesRepository});
   final JobsRepository jobsRepository;
   final EntriesRepository entriesRepository;
 
   /// combine List<Job>, List<Entry> into List<EntryJob>
-  Stream<List<EntryJob>> _allEntriesStream(UserID uid) =>
-      CombineLatestStream.combine2(
+  Stream<List<EntryJob>> _allEntriesStream(UserID uid) => CombineLatestStream.combine2(
         entriesRepository.watchEntries(uid: uid),
         jobsRepository.watchJobs(uid: uid),
         _entriesJobsCombiner,
       );
 
-  static List<EntryJob> _entriesJobsCombiner(
-      List<Entry> entries, List<Job> jobs) {
+  static List<EntryJob> _entriesJobsCombiner(List<Entry> entries, List<Job> jobs) {
     return entries.map((entry) {
       final job = jobs.firstWhere((job) => job.id == entry.jobId);
       return EntryJob(entry, job);
@@ -89,8 +86,7 @@ EntriesService entriesService(EntriesServiceRef ref) {
 }
 
 @riverpod
-Stream<List<EntriesListTileModel>> entriesTileModelStream(
-    EntriesTileModelStreamRef ref) {
+Stream<List<EntriesListTileModel>> entriesTileModelStream(EntriesTileModelStreamRef ref) {
   final user = ref.watch(firebaseAuthProvider).currentUser;
   if (user == null) {
     throw AssertionError('User can\'t be null when fetching entries');
