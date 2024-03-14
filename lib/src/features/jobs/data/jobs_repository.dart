@@ -10,6 +10,7 @@ import 'package:starter_architecture_flutter_firebase/src/features/jobs/domain/j
 
 part 'jobs_repository.g.dart';
 
+// Repository for interacting with jobs
 class JobsRepository {
   const JobsRepository(this._firestore);
   final FirebaseFirestore _firestore;
@@ -19,10 +20,7 @@ class JobsRepository {
   static String entriesPath(String uid) => EntriesRepository.entriesPath(uid);
 
   // create
-  Future<void> addJob(
-          {required UserID uid,
-          required String name,
-          required int ratePerHour}) =>
+  Future<void> addJob({required UserID uid, required String name, required int ratePerHour}) =>
       _firestore.collection(jobsPath(uid)).add({
         'name': name,
         'ratePerHour': ratePerHour,
@@ -49,27 +47,23 @@ class JobsRepository {
   }
 
   // read
-  Stream<Job> watchJob({required UserID uid, required JobID jobId}) =>
-      _firestore
-          .doc(jobPath(uid, jobId))
-          .withConverter<Job>(
-            fromFirestore: (snapshot, _) =>
-                Job.fromMap(snapshot.data()!, snapshot.id),
-            toFirestore: (job, _) => job.toMap(),
-          )
-          .snapshots()
-          .map((snapshot) => snapshot.data()!);
+  Stream<Job> watchJob({required UserID uid, required JobID jobId}) => _firestore
+      .doc(jobPath(uid, jobId))
+      .withConverter<Job>(
+        fromFirestore: (snapshot, _) => Job.fromMap(snapshot.data()!, snapshot.id),
+        toFirestore: (job, _) => job.toMap(),
+      )
+      .snapshots()
+      .map((snapshot) => snapshot.data()!);
 
   Stream<List<Job>> watchJobs({required UserID uid}) => queryJobs(uid: uid)
       .snapshots()
       .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
 
-  Query<Job> queryJobs({required UserID uid}) =>
-      _firestore.collection(jobsPath(uid)).withConverter(
-            fromFirestore: (snapshot, _) =>
-                Job.fromMap(snapshot.data()!, snapshot.id),
-            toFirestore: (job, _) => job.toMap(),
-          );
+  Query<Job> queryJobs({required UserID uid}) => _firestore.collection(jobsPath(uid)).withConverter(
+        fromFirestore: (snapshot, _) => Job.fromMap(snapshot.data()!, snapshot.id),
+        toFirestore: (job, _) => job.toMap(),
+      );
 
   Future<List<Job>> fetchJobs({required UserID uid}) async {
     final jobs = await queryJobs(uid: uid).get();

@@ -3,9 +3,14 @@ import 'package:flutter/foundation.dart';
 
 typedef JobID = String;
 
+// This class defines the data model for a job. Equatable allows for value comparison of objects.
 @immutable
 class Job extends Equatable {
-  const Job({required this.id, required this.name, required this.ratePerHour});
+  const Job({
+    required this.id,
+    required this.name,
+    required this.ratePerHour,
+  });
   final JobID id;
   final String name;
   final int ratePerHour;
